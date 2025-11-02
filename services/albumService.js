@@ -3,7 +3,7 @@ import { getAlbumById } from './spotifyService.js'
 
 class AlbumService {
     // Add album to library
-    async addAlbum(spotifyId, rating, review = '') {
+    async addAlbum(spotifyId, rating, review = '', listened = false) {
         try {
             // Check if album already exists
             const existingAlbum = await Album.findOne({ spotifyId })
@@ -18,7 +18,8 @@ class AlbumService {
             const album = new Album({
                 ...spotifyAlbum,
                 rating,
-                review
+                review,
+                listened
             })
             // save album to database
             await album.save()
@@ -30,11 +31,17 @@ class AlbumService {
     }
 
     // Get all albums in library
-    async getAllAlbums(sortBy = 'dateAdded', order = 'desc') {
+    async getAllAlbums(sortBy = 'dateAdded', order = 'desc', listenedFilter = null) {
         try {
             const sortOrder = order === 'desc' ? -1 : 1
 
-            const albums = await Album.find().sort({ [sortBy]: sortOrder })
+            // Build filter object
+            const filter = {}
+            if (listenedFilter !== null && listenedFilter !== undefined) {
+                filter.listened = listenedFilter === 'true' || listenedFilter === true
+            }
+
+            const albums = await Album.find(filter).sort({ [sortBy]: sortOrder })
             return albums
         } catch (err) {
             console.error('Error getting albums:', err)
@@ -69,6 +76,9 @@ class AlbumService {
             }
             if (updates.review !== undefined) {
                 album.review = updates.review
+            }
+            if (updates.listened !== undefined) {
+                album.listened = updates.listened
             }
 
             await album.save()

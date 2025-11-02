@@ -21,8 +21,8 @@ router.get('/search', async (req, res, next) => {
 // Get all the albums in user's library
 router.get('/library', async (req, res, next) => {
     try {
-        const { sortBy, order } = req.query
-        const albums = await albumService.getAllAlbums(sortBy, order)
+        const { sortBy, order, listened } = req.query
+        const albums = await albumService.getAllAlbums(sortBy, order, listened)
         res.json(albums)
     } catch (err) {
         next(err)
@@ -83,7 +83,7 @@ router.get('/library/:spotifyId', async (req, res, next) => {
 // Add album to library
 router.post('/library', async (req, res, next) => {
     try {
-        const { spotifyId, rating, review } = req.body
+        const { spotifyId, rating, review, listened } = req.body
 
         if (!spotifyId) {
             return res.status(400).json({ error: 'Spotify ID is required' })
@@ -95,7 +95,7 @@ router.post('/library', async (req, res, next) => {
             return res.status(400).json({ error: 'Rating must be between 0 and 10' })
         }
 
-        const album = await albumService.addAlbum(spotifyId, rating, review)
+        const album = await albumService.addAlbum(spotifyId, rating, review, listened)
         res.status(201).json(album)
     } catch (err) {
         next(err)
@@ -105,7 +105,7 @@ router.post('/library', async (req, res, next) => {
 // Update album in library
 router.patch('/library/:spotifyId', async (req, res, next) => {
     try {
-        const { rating, review } = req.body
+        const { rating, review, listened } = req.body
 
         const updates = {}
         if (rating !== undefined) {
@@ -116,6 +116,9 @@ router.patch('/library/:spotifyId', async (req, res, next) => {
         }
         if (review !== undefined) {
             updates.review = review
+        }
+        if (listened !== undefined) {
+            updates.listened = listened
         }
 
         const album = await albumService.updateAlbum(req.params.spotifyId, updates)

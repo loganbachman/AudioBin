@@ -55,6 +55,10 @@ const albumSchema = new mongoose.Schema({
         type: String,
         maxlength: 1000
     },
+    listened: {
+        type: Boolean,
+        default: false
+    },
 
     // Metadata
     dateAdded: {
