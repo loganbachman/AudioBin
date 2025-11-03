@@ -1,0 +1,162 @@
+.add-album {
+    background-color: #000000;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    color: white;
+}
+
+.add-album-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.dashboard-nav-btn {
+    padding: 0.75rem 1.5rem;
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    border: 2px solid #1a5d1a;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.app-title {
+    font-size: 3rem;
+    color: #1a5d1a;
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.add-album-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    padding: 2rem;
+    background-color: #0a0a0a;
+    border: 2px solid #1a5d1a;
+    border-radius: 12px;
+}
+
+.add-album-form input[type="text"],
+.add-album-form input[type="number"],
+.add-album-form textarea {
+    padding: 1rem;
+    background-color: #000000;
+    color: white;
+    border: 2px solid #1a5d1a;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.add-album-form input[type="text"]::placeholder,
+.add-album-form input[type="number"]::placeholder,
+.add-album-form textarea::placeholder {
+    color: #555;
+}
+
+.add-album-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.add-album-form button {
+    padding: 1rem;
+    background-color: #1a5d1a;
+    color: white;
+    border: 2px solid #1a5d1a;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: none;
+}
+
+.add-album-form button:disabled {
+    background-color: #0d2e0d;
+    border-color: #0d2e0d;
+    color: #555;
+    cursor: not-allowed;
+}
+
+.search-results {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: #000000;
+    border: 2px solid #1a5d1a;
+    border-radius: 8px;
+}
+
+.search-results li {
+    padding: 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid #0d2e0d;
+    color: white;
+    transition: none;
+}
+
+.search-results li:last-child {
+    border-bottom: none;
+}
+
+.selected-album {
+    background-color: #1a5d1a !important;
+    color: white !important;
+    font-weight: 600;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #1a5d1a;
+}
+
+.checkbox-container label {
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.loading-text {
+    color: #1a5d1a;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.selected-text {
+    color: #1a5d1a;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.disabled-input {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.disabled-input::placeholder {
+    color: #333;
+}
