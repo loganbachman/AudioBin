@@ -1,11 +1,11 @@
 **AudioBin**
 
-*Version 1*
+**Version 1**
 -CRUD functionality for albums
 -Search with SpotifyAPI
 -Sort albums
 
-*Future versions*
+**Future versions**
 -Login functionality
 -Music related quote
 -Landing page
