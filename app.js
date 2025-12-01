@@ -9,6 +9,9 @@ import cors from 'cors'
 import indexRouter from './routes/index.js'
 import usersRouter from './routes/users.js'
 import albumsRouter from './routes/albumController.js'
+import authRouter from './routes/auth.js'
+import favoritesRouter from './routes/favorites.js'
+import quotesRouter from './routes/quotes.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -31,6 +34,9 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
 app.use('/albums', albumsRouter)
+app.use('/auth', authRouter)
+app.use('/favorites', favoritesRouter)
+app.use('/quotes', quotesRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

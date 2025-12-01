@@ -17,12 +17,22 @@ function ViewAlbum() {
     });
 
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [isFavorited, setIsFavorited] = useState(false);
+    const [favoritesLoading, setFavoritesLoading] = useState(false);
+
     // get viewed album from database
     useEffect(() => {
         const fetchAlbum = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`http://localhost:3000/albums/library/${spotifyId}`);
+                // Get user from localStorage
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.userId) {
+                    navigate('/login');
+                    return;
+                }
+
+                const response = await fetch(`http://localhost:3000/albums/library/${spotifyId}?userId=${user.userId}`);
                 const data = await response.json();
                 setAlbum(data);
                 setEditData({
@@ -38,17 +48,48 @@ function ViewAlbum() {
         };
 
         fetchAlbum();
+    }, [spotifyId, navigate]);
+
+    // fetch favorite status
+    useEffect(() => {
+        const fetchFavoriteStatus = async () => {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.userId) return;
+
+                const response = await fetch(`http://localhost:3000/favorites?userId=${user.userId}`);
+                const data = await response.json();
+
+                if (data.success && data.favorites) {
+                    setIsFavorited(data.favorites.includes(spotifyId));
+                }
+            } catch (err) {
+                console.error('Failed to fetch favorite status', err);
+            }
+        };
+
+        fetchFavoriteStatus();
     }, [spotifyId]);
 
     // handle updating your album
     const handleUpdate = async () => {
         try {
+            // Get user from localStorage
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || !user.userId) {
+                navigate('/login');
+                return;
+            }
+
             const response = await fetch(`http://localhost:3000/albums/library/${spotifyId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(editData)
+                body: JSON.stringify({
+                    ...editData,
+                    userId: user.userId
+                })
             });
             const data = await response.json();
             setAlbum(data);
@@ -61,7 +102,14 @@ function ViewAlbum() {
     // delete album from database
     const handleDelete = async () => {
         try {
-            await fetch(`http://localhost:3000/albums/library/${spotifyId}`, {
+            // Get user from localStorage
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || !user.userId) {
+                navigate('/login');
+                return;
+            }
+
+            await fetch(`http://localhost:3000/albums/library/${spotifyId}?userId=${user.userId}`, {
                 method: 'DELETE'
             });
             navigate('/');
@@ -69,6 +117,43 @@ function ViewAlbum() {
             console.error('Failed to delete album', err);
         }
     };
+    // toggle favorite status
+    const handleToggleFavorite = async () => {
+        setFavoritesLoading(true);
+        try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || !user.userId) {
+                navigate('/login');
+                return;
+            }
+
+            if (isFavorited) {
+                // Remove from favorites
+                await fetch(`http://localhost:3000/favorites/${spotifyId}?userId=${user.userId}`, {
+                    method: 'DELETE'
+                });
+                setIsFavorited(false);
+            } else {
+                // Add to favorites
+                await fetch('http://localhost:3000/favorites', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: user.userId,
+                        spotifyId: spotifyId
+                    })
+                });
+                setIsFavorited(true);
+            }
+        } catch (err) {
+            console.error('Failed to toggle favorite', err);
+        } finally {
+            setFavoritesLoading(false);
+        }
+    };
+
     // correctly format duration for song length (in tracklist)
     const formatDuration = (ms) => {
         const minutes = Math.floor(ms / 60000);
@@ -197,6 +282,14 @@ function ViewAlbum() {
                                 </button>
 
                                 <button
+                                    onClick={handleToggleFavorite}
+                                    disabled={favoritesLoading}
+                                    className={isFavorited ? 'favorite-btn favorited' : 'favorite-btn'}
+                                >
+                                    {favoritesLoading ? 'Loading...' : (isFavorited ? '★ Favorited' : '☆ Add to Favorites')}
+                                </button>
+
+                                <button
                                     onClick={() => setShowDeleteConfirm(true)}
                                     className="delete-btn"
                                 >
@@ -210,7 +303,7 @@ function ViewAlbum() {
                 {showDeleteConfirm && (
                     <div className="delete-modal">
                         <div className="delete-modal-content">
-                            <p>Are you sure you want to delete this album?</p>
+                            <p>Are you sure you want to delete this album? This will be permanent.</p>
                             <div className="delete-modal-buttons">
                                 <button onClick={handleDelete} className="confirm-delete-btn">Yes</button>
                                 <button onClick={() => setShowDeleteConfirm(false)} className="cancel-delete-btn">No</button>

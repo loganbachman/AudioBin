@@ -11,27 +11,67 @@ function Dashboard() {
     const [sortBy, setSortBy] = useState('dateAdded');
     const [sortOrder, setSortOrder] = useState('desc');
     const [listenedFilter, setListenedFilter] = useState('all');
+    const [favoritesFilter, setFavoritesFilter] = useState('all');
+    const [favorites, setFavorites] = useState([]);
 
-    // when searching albums, filter results accordingly
+    // when searching albums or filtering by favorites, filter results accordingly
     useEffect(() => {
+        let filtered = albums;
+
+        // Apply search filter
         if (searchQuery.trim()) {
-            const filtered = albums.filter(album =>
+            filtered = filtered.filter(album =>
                 album.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 album.artist.toLowerCase().includes(searchQuery.toLowerCase())
             );
-            setFilteredAlbums(filtered);
-        } else {
-            setFilteredAlbums(albums);
         }
-    }, [searchQuery, albums]);
+
+        // Apply favorites filter
+        if (favoritesFilter === 'favorites') {
+            filtered = filtered.filter(album => favorites.includes(album.spotifyId));
+        } else if (favoritesFilter === 'notFavorites') {
+            filtered = filtered.filter(album => !favorites.includes(album.spotifyId));
+        }
+
+        setFilteredAlbums(filtered);
+    }, [searchQuery, albums, favoritesFilter, favorites]);
+
+    // fetch favorites
+    useEffect(() => {
+        const fetchFavorites = async () => {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.userId) return;
+
+                const response = await fetch(`http://localhost:3000/favorites?userId=${user.userId}`);
+                const data = await response.json();
+
+                if (data.success && data.favorites) {
+                    setFavorites(data.favorites);
+                }
+            } catch (err) {
+                console.error('Failed to fetch favorites', err);
+            }
+        };
+
+        fetchFavorites();
+    }, []);
 
     // display album library
     useEffect(() => {
         const fetchAlbums = async () => {
             setLoading(true);
             try {
+                // Get user from localStorage
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.userId) {
+                    navigate('/login');
+                    return;
+                }
+
                 // display based on if listened to, not listened, or all albums
                 const params = new URLSearchParams({
+                    userId: user.userId,
                     sortBy,
                     order: sortOrder,
                     ...(listenedFilter !== 'all' && { listened: listenedFilter === 'listened' })
@@ -48,7 +88,7 @@ function Dashboard() {
         };
 
         fetchAlbums();
-    }, [sortBy, sortOrder, listenedFilter]);
+    }, [sortBy, sortOrder, listenedFilter, navigate]);
 
     // navigate to view specific album
     const handleAlbumClick = (spotifyId) => {
@@ -110,6 +150,16 @@ function Dashboard() {
                             <option value="listened">Listened</option>
                             <option value="notListened">Not Listened</option>
                         </select>
+
+                        <select
+                            value={favoritesFilter}
+                            onChange={(e) => setFavoritesFilter(e.target.value)}
+                            className="sort-select"
+                        >
+                            <option value="all">All Albums</option>
+                            <option value="favorites">Favorites Only</option>
+                            <option value="notFavorites">Not Favorited</option>
+                        </select>
                     </div>
                 </div>
 
@@ -138,6 +188,9 @@ function Dashboard() {
                                     )}
                                     {album.listened && (
                                         <div className="listened-badge">✓</div>
+                                    )}
+                                    {favorites.includes(album.spotifyId) && (
+                                        <div className="favorite-badge">★</div>
                                     )}
                                 </div>
                                 <div className="album-info">

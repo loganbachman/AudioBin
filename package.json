@@ -17,6 +17,7 @@
     "morgan": "~1.9.1",
     "node": "^25.1.0",
     "pug": "2.0.0-beta11",
-    "spotify-web-api-node": "^5.0.2"
+    "spotify-web-api-node": "^5.0.2",
+    "zeromq": "^6.5.0"
   }
 }

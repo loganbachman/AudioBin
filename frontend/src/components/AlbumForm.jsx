@@ -46,6 +46,14 @@ function AlbumForm() {
             return
         }
 
+        // Get user from localStorage
+        const user = JSON.parse(localStorage.getItem('user'))
+        if (!user || !user.userId) {
+            console.error('User not logged in')
+            navigate('/login')
+            return
+        }
+
         setLoading(true)
         try {
             const response = await fetch('http://localhost:3000/albums/library', {
@@ -54,6 +62,7 @@ function AlbumForm() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    userId: user.userId,
                     spotifyId: selectedAlbum.spotifyId,
                     rating: listened ? rating: 0,
                     review: listened ? review : '',

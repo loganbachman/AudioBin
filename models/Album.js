@@ -1,11 +1,17 @@
 import mongoose from 'mongoose'
 
 const albumSchema = new mongoose.Schema({
+    // User association
+    userId: {
+        type: Number,
+        required: true,
+        index: true
+    },
+
     // Spotify data
     spotifyId: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     name: {
         type: String,
@@ -80,6 +86,7 @@ albumSchema.pre('save', function(next) {
 })
 
 // Create indexes for better query performance
+albumSchema.index({ userId: 1, spotifyId: 1 }, { unique: true })
 albumSchema.index({ name: 'text', artist: 'text' })
 albumSchema.index({ rating: -1 })
 albumSchema.index({ dateAdded: -1 })

@@ -142,6 +142,22 @@
     font-weight: bold;
 }
 
+.favorite-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: #ffa500;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
 .album-info {
     color: #e0e0e0;
 }
@@ -384,6 +400,7 @@
 }
 
 .edit-btn,
+.favorite-btn,
 .delete-btn {
     width: 100%;
     padding: 1rem;
@@ -397,6 +414,22 @@
 .edit-btn {
     background-color: #1a5d1a;
     color: white;
+}
+
+.favorite-btn {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    border-color: #ffa500;
+}
+
+.favorite-btn.favorited {
+    background-color: #ffa500;
+    color: white;
+}
+
+.favorite-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .delete-btn {

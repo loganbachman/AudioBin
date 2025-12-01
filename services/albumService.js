@@ -3,10 +3,10 @@ import { getAlbumById } from './spotifyService.js'
 
 class AlbumService {
     // Add album to library
-    async addAlbum(spotifyId, rating, review = '', listened = false) {
+    async addAlbum(userId, spotifyId, rating, review = '', listened = false) {
         try {
-            // Check if album already exists
-            const existingAlbum = await Album.findOne({ spotifyId })
+            // Check if album already exists for this user
+            const existingAlbum = await Album.findOne({ userId, spotifyId })
             if (existingAlbum) {
                 throw new Error('Album already exists in your library')
             }
@@ -16,6 +16,7 @@ class AlbumService {
 
             // Create new album with user data
             const album = new Album({
+                userId,
                 ...spotifyAlbum,
                 rating,
                 review,
@@ -31,12 +32,12 @@ class AlbumService {
     }
 
     // Get all albums in library
-    async getAllAlbums(sortBy = 'dateAdded', order = 'desc', listenedFilter = null) {
+    async getAllAlbums(userId, sortBy = 'dateAdded', order = 'desc', listenedFilter = null) {
         try {
             const sortOrder = order === 'desc' ? -1 : 1
 
             // Build filter object
-            const filter = {}
+            const filter = { userId }
             if (listenedFilter !== null && listenedFilter !== undefined) {
                 filter.listened = listenedFilter === 'true' || listenedFilter === true
             }
@@ -50,9 +51,9 @@ class AlbumService {
     }
 
     // Get album by ID
-    async getAlbumBySpotifyId(spotifyId) {
+    async getAlbumBySpotifyId(userId, spotifyId) {
         try {
-            const album = await Album.findOne({ spotifyId })
+            const album = await Album.findOne({ userId, spotifyId })
             if (!album) {
                 throw new Error('Album not found in library')
             }
@@ -64,9 +65,9 @@ class AlbumService {
     }
 
     // Update album rating and review
-    async updateAlbum(spotifyId, updates) {
+    async updateAlbum(userId, spotifyId, updates) {
         try {
-            const album = await Album.findOne({ spotifyId })
+            const album = await Album.findOne({ userId, spotifyId })
             if (!album) {
                 throw new Error('Album not found in library')
             }
@@ -90,9 +91,9 @@ class AlbumService {
     }
 
     // Delete album from library
-    async deleteAlbum(spotifyId) {
+    async deleteAlbum(userId, spotifyId) {
         try {
-            const album = await Album.findOneAndDelete({ spotifyId })
+            const album = await Album.findOneAndDelete({ userId, spotifyId })
             if (!album) {
                 throw new Error('Album not found in library')
             }
@@ -104,9 +105,10 @@ class AlbumService {
     }
 
     // Search albums in library
-    async searchLibrary(query) {
+    async searchLibrary(userId, query) {
         try {
             const albums = await Album.find({
+                userId,
                 $text: { $search: query }
             })
             return albums
@@ -117,9 +119,10 @@ class AlbumService {
     }
 
     // Get albums by rating range
-    async getAlbumsByRating(minRating, maxRating = 10) {
+    async getAlbumsByRating(userId, minRating, maxRating = 10) {
         try {
             const albums = await Album.find({
+                userId,
                 rating: { $gte: minRating, $lte: maxRating }
             }).sort({ rating: -1 })
             return albums
@@ -130,11 +133,12 @@ class AlbumService {
     }
 
     // Get statistics
-    async getLibraryStats() {
+    async getLibraryStats(userId) {
         try {
-            const totalAlbums = await Album.countDocuments()
+            const totalAlbums = await Album.countDocuments({ userId })
             // user's mean rating of albums
             const avgRating = await Album.aggregate([
+                { $match: { userId } },
                 {
                     $group: {
                         _id: null,
@@ -143,7 +147,7 @@ class AlbumService {
                 }
             ])
             // user's top 10 rated albums
-            const topRated = await Album.find()
+            const topRated = await Album.find({ userId })
                 .sort({ rating: -1 })
                 .limit(10)
 

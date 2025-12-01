@@ -21,8 +21,11 @@ router.get('/search', async (req, res, next) => {
 // Get all the albums in user's library
 router.get('/library', async (req, res, next) => {
     try {
-        const { sortBy, order, listened } = req.query
-        const albums = await albumService.getAllAlbums(sortBy, order, listened)
+        const { sortBy, order, listened, userId } = req.query
+        if (!userId) {
+            return res.status(400).json({ error: 'userId is required' })
+        }
+        const albums = await albumService.getAllAlbums(parseInt(userId), sortBy, order, listened)
         res.json(albums)
     } catch (err) {
         next(err)
@@ -32,7 +35,11 @@ router.get('/library', async (req, res, next) => {
 // Get library statistics
 router.get('/library/stats', async (req, res, next) => {
     try {
-        const stats = await albumService.getLibraryStats()
+        const { userId } = req.query
+        if (!userId) {
+            return res.status(400).json({ error: 'userId is required' })
+        }
+        const stats = await albumService.getLibraryStats(parseInt(userId))
         res.json(stats)
     } catch (err) {
         next(err)
@@ -42,11 +49,14 @@ router.get('/library/stats', async (req, res, next) => {
 // Search albums in library
 router.get('/library/search', async (req, res, next) => {
     try {
-        const { query } = req.query
+        const { query, userId } = req.query
+        if (!userId) {
+            return res.status(400).json({ error: 'userId is required' })
+        }
         if (!query) {
             return res.status(400).json({ error: 'Search query is required' })
         }
-        const albums = await albumService.searchLibrary(query)
+        const albums = await albumService.searchLibrary(parseInt(userId), query)
         res.json(albums)
     } catch (err) {
         next(err)
@@ -56,11 +66,15 @@ router.get('/library/search', async (req, res, next) => {
 // Get albums by rating range
 router.get('/library/rating', async (req, res, next) => {
     try {
-        const { min, max } = req.query
+        const { userId, min, max } = req.query
+        if (!userId) {
+            return res.status(400).json({ error: 'userId is required' })
+        }
         if (!min) {
             return res.status(400).json({ error: 'Minimum rating is required' })
         }
         const albums = await albumService.getAlbumsByRating(
+            parseInt(userId),
             parseFloat(min),
             max ? parseFloat(max) : 10
         )
@@ -73,7 +87,11 @@ router.get('/library/rating', async (req, res, next) => {
 // Get specific album from library
 router.get('/library/:spotifyId', async (req, res, next) => {
     try {
-        const album = await albumService.getAlbumBySpotifyId(req.params.spotifyId)
+        const { userId } = req.query
+        if (!userId) {
+            return res.status(400).json({ error: 'userId is required' })
+        }
+        const album = await albumService.getAlbumBySpotifyId(parseInt(userId), req.params.spotifyId)
         res.json(album)
     } catch (err) {
         next(err)
@@ -83,8 +101,11 @@ router.get('/library/:spotifyId', async (req, res, next) => {
 // Add album to library
 router.post('/library', async (req, res, next) => {
     try {
-        const { spotifyId, rating, review, listened } = req.body
+        const { userId, spotifyId, rating, review, listened } = req.body
 
+        if (!userId) {
+            return res.status(400).json({ error: 'userId is required' })
+        }
         if (!spotifyId) {
             return res.status(400).json({ error: 'Spotify ID is required' })
         }
@@ -95,7 +116,7 @@ router.post('/library', async (req, res, next) => {
             return res.status(400).json({ error: 'Rating must be between 0 and 10' })
         }
 
-        const album = await albumService.addAlbum(spotifyId, rating, review, listened)
+        const album = await albumService.addAlbum(parseInt(userId), spotifyId, rating, review, listened)
         res.status(201).json(album)
     } catch (err) {
         next(err)
@@ -105,7 +126,11 @@ router.post('/library', async (req, res, next) => {
 // Update album in library
 router.patch('/library/:spotifyId', async (req, res, next) => {
     try {
-        const { rating, review, listened } = req.body
+        const { userId, rating, review, listened } = req.body
+
+        if (!userId) {
+            return res.status(400).json({ error: 'userId is required' })
+        }
 
         const updates = {}
         if (rating !== undefined) {
@@ -121,7 +146,7 @@ router.patch('/library/:spotifyId', async (req, res, next) => {
             updates.listened = listened
         }
 
-        const album = await albumService.updateAlbum(req.params.spotifyId, updates)
+        const album = await albumService.updateAlbum(parseInt(userId), req.params.spotifyId, updates)
         res.json(album)
     } catch (err) {
         next(err)
@@ -131,7 +156,11 @@ router.patch('/library/:spotifyId', async (req, res, next) => {
 // Delete album from library
 router.delete('/library/:spotifyId', async (req, res, next) => {
     try {
-        const result = await albumService.deleteAlbum(req.params.spotifyId)
+        const { userId } = req.query
+        if (!userId) {
+            return res.status(400).json({ error: 'userId is required' })
+        }
+        const result = await albumService.deleteAlbum(parseInt(userId), req.params.spotifyId)
         res.json(result)
     } catch (err) {
         next(err)
