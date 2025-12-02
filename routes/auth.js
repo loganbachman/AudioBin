@@ -4,7 +4,7 @@ import zmq from 'zeromq';
 const router = express.Router();
 
 // ZeroMQ socket configuration
-const ZEROMQ_ADDRESS = process.env.ZEROMQ_ADDRESS || 'tcp://localhost:5555';
+const ZEROMQ_ADDRESS = process.env.ZEROMQ_ADDRESS || 'tcp://localhost:5557';
 
 // Helper function to communicate with ZeroMQ service
 async function sendZmqRequest(action, payload) {

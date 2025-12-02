@@ -11,7 +11,7 @@ async function getQuotesFromService(quantity, category) {
   try {
     sock.connect(QUOTES_SERVICE_ADDRESS);
 
-    // Send request: "{quantity} {category}"
+    // Send request
     const message = category ? `${quantity} ${category}` : `${quantity}`;
     await sock.send(message);
 
@@ -32,12 +32,12 @@ async function getQuotesFromService(quantity, category) {
   }
 }
 
-// GET /quotes - Get random quotes
+// GET random quotes
 // Query params: quantity (default 1), category (default random)
 router.get('/', async (req, res) => {
   try {
     const quantity = req.query.quantity || '1';
-    const category = req.query.category || '';
+    const category = req.query.category || 'music';
 
     const quotes = await getQuotesFromService(quantity, category);
 

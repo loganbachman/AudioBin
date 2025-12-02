@@ -25,7 +25,7 @@ async function sendDataSaverRequest(payload) {
   }
 }
 
-// POST /favorites - Add album to favorites
+// POST add album to favorites
 router.post('/', async (req, res) => {
   try {
     const { userId, spotifyId } = req.body;
@@ -44,15 +44,15 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Get current favorites
+    // Get user's favorite albums
     const getAllResponse = await sendDataSaverRequest({ action: 'get_all' });
     let allData = JSON.parse(getAllResponse);
 
-    // Find this user's favorites (convert userId to number for comparison)
+    // Find this user's favorites (convert userId to number)
     let userFavorites = allData.find(item => item.userId === parseInt(userId) && item.type === 'favorites');
 
     if (!userFavorites) {
-      // Create new favorites entry for this user
+      // Create favorites entry for this user
       userFavorites = {
         userId: userId,
         type: 'favorites',
@@ -63,7 +63,7 @@ router.post('/', async (req, res) => {
         data: userFavorites
       });
     } else {
-      // Check if already favorited
+      // Check if album already favorited
       if (userFavorites.spotifyIds.includes(spotifyId)) {
         return res.status(200).json({
           success: true,
@@ -71,7 +71,7 @@ router.post('/', async (req, res) => {
         });
       }
 
-      // Add to favorites - need to delete old and save new
+      // Add to favorites
       const userIndex = allData.findIndex(item => item.userId === parseInt(userId) && item.type === 'favorites');
       await sendDataSaverRequest({
         action: 'delete',
@@ -98,7 +98,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// DELETE /favorites/:spotifyId - Remove album from favorites
+// DELETE album from favorites
 router.delete('/:spotifyId', async (req, res) => {
   try {
     const { userId } = req.query;
@@ -115,7 +115,7 @@ router.delete('/:spotifyId', async (req, res) => {
     const getAllResponse = await sendDataSaverRequest({ action: 'get_all' });
     let allData = JSON.parse(getAllResponse);
 
-    // Find this user's favorites (convert userId to number for comparison)
+    // Find this user's favorites (convert userId to number)
     const userIndex = allData.findIndex(item => item.userId === parseInt(userId) && item.type === 'favorites');
 
     if (userIndex === -1) {
@@ -165,7 +165,7 @@ router.delete('/:spotifyId', async (req, res) => {
   }
 });
 
-// GET /favorites - Get all favorites for a user
+// GET all favorites for a user
 router.get('/', async (req, res) => {
   try {
     const { userId } = req.query;
@@ -181,7 +181,7 @@ router.get('/', async (req, res) => {
     const getAllResponse = await sendDataSaverRequest({ action: 'get_all' });
     let allData = JSON.parse(getAllResponse);
 
-    // Find this user's favorites (convert userId to number for comparison)
+    // Find this user's favorites (convert userId to number)
     const userFavorites = allData.find(item => item.userId === parseInt(userId) && item.type === 'favorites');
 
     if (!userFavorites) {

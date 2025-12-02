@@ -12,6 +12,7 @@ import albumsRouter from './routes/albumController.js'
 import authRouter from './routes/auth.js'
 import favoritesRouter from './routes/favorites.js'
 import quotesRouter from './routes/quotes.js'
+import randomRouter from './routes/random.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -37,6 +38,7 @@ app.use('/albums', albumsRouter)
 app.use('/auth', authRouter)
 app.use('/favorites', favoritesRouter)
 app.use('/quotes', quotesRouter)
+app.use('/random', randomRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -15,6 +15,17 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+    gap: 2rem;
+}
+
+.header-left {
+    flex: 1;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
 }
 
 .app-title {
@@ -34,15 +45,164 @@
     letter-spacing: 2px;
 }
 
-.add-album-btn {
+.add-album-btn,
+.logout-btn {
     padding: 1rem 2rem;
-    background-color: #1a5d1a;
-    color: white;
-    border: 2px solid #1a5d1a;
     border-radius: 8px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-album-btn {
+    background-color: #1a5d1a;
+    color: white;
+    border: 2px solid #1a5d1a;
+}
+
+.add-album-btn:hover {
+    background-color: #22752b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 93, 26, 0.4);
+}
+
+.logout-btn {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    border: 2px solid #666;
+}
+
+.logout-btn:hover {
+    background-color: #2a2a2a;
+    border-color: #999;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+/* Daily Challenge Section */
+.daily-challenge-section {
+    background-color: #1a1a1a;
+    border: 2px solid #1a5d1a;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.daily-challenge-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.daily-challenge-header h2 {
+    color: #1a5d1a;
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: 700;
+}
+
+.challenge-btn {
+    padding: 0.75rem 1.5rem;
+    background-color: #1a5d1a;
+    color: white;
+    border: 2px solid #1a5d1a;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.challenge-btn:hover:not(:disabled) {
+    background-color: #22752b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 93, 26, 0.4);
+}
+
+.challenge-btn:disabled {
+    background-color: #444;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.challenge-card {
+    display: flex;
+    gap: 1.5rem;
+    background-color: #0a0a0a;
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.challenge-card:hover {
+    border-color: #1a5d1a;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(26, 93, 26, 0.3);
+}
+
+.challenge-image {
+    width: 150px;
+    height: 150px;
+    flex-shrink: 0;
+}
+
+.challenge-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.challenge-placeholder {
+    width: 100%;
+    height: 100%;
+    background-color: #2a2a2a;
+    border: 2px solid #333;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+}
+
+.challenge-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.challenge-info h3 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.challenge-artist {
+    color: #1a5d1a;
+    font-size: 1.1rem;
+    margin: 0 0 1rem 0;
+    font-weight: 500;
+}
+
+.challenge-label {
+    color: #999;
+    font-size: 0.95rem;
+    margin: 0;
+    font-style: italic;
+}
+
+.no-challenge {
+    color: #999;
+    text-align: center;
+    font-size: 1rem;
+    margin: 0;
+    padding: 2rem 0;
 }
 
 /* Controls Section */
@@ -576,10 +736,45 @@
     .dashboard-header {
         flex-direction: column;
         gap: 1rem;
+        align-items: stretch;
+    }
+
+    .header-left {
+        text-align: center;
+    }
+
+    .header-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .add-album-btn,
+    .logout-btn {
+        width: 100%;
     }
 
     .app-title {
         font-size: 2rem;
+    }
+
+    .daily-challenge-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .challenge-btn {
+        width: 100%;
+    }
+
+    .challenge-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .challenge-image {
+        width: 200px;
+        height: 200px;
     }
 
     .albums-grid {

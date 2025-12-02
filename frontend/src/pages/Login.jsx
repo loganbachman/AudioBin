@@ -11,7 +11,7 @@ function Login() {
     const [quote, setQuote] = useState('');
     const [quoteLoading, setQuoteLoading] = useState(true);
 
-    // Fetch daily music quote
+    // Fetch daily music quote from microservice
     useEffect(() => {
         const fetchQuote = async () => {
             try {

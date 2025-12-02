@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import { useNavigate } from 'react-router-dom';
 import '../styling/AlbumForm.css'
 
-function AlbumForm() {
+function AddAlbum() {
     const navigate = useNavigate()
     const [searchQuery, setSearchQuery] = useState('')
     const [searchResults, setSearchResults] = useState([])
@@ -180,4 +180,4 @@ function AlbumForm() {
     )
 }
 
-export default AlbumForm
+export default AddAlbum

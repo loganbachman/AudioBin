@@ -1,6 +1,6 @@
 import './styling/App.css'
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
-import AlbumForm from "./components/AlbumForm.jsx";
+import AddAlbum from "./pages/AddAlbum.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import ViewAlbum from "./pages/ViewAlbum.jsx";
 import Login from "./pages/Login.jsx";
@@ -14,7 +14,7 @@ function App() {
                 <Route path="/login" element={<Login />}/>
                 <Route path="/register" element={<Register />}/>
                 <Route path="/" element={<Dashboard />}/>
-                <Route path="/add-album" element={<AlbumForm />}/>
+                <Route path="/add-album" element={<AddAlbum />}/>
                 <Route path="/album/:spotifyId" element={<ViewAlbum />}/>
             </Routes>
         </Router>
